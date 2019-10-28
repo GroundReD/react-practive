@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <script
+      crossorigin
+      src="https://unpkg.com/react@16/umd/react.development.js"
+    ></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"
+    ></script>
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+    <title>구구단</title>
+  </head>
+  <body>
+    <div id="root">
+      <!-- // JSX는 싱글태그에도 닫는 태그를 꼭 달아주자-->
+      <!-- 바뀌는 건 state -->
+    </div>
+
+    <script type="text/babel">
+      class GuGuDan extends React.Component {
+        constructor(props) {
+          super(props);
+          this.state = {
+            first: Math.ceil(Math.random() * 9),
+            second: Math.ceil(Math.random() * 9),
+            value: "",
+            result: ""
+          };
+        }
+
+        onSubmit = e => {
+          e.preventDefault();
+          if (
+            parseInt(this.state.value) ===
+            this.state.first * this.state.second
+          ) {
+            this.setState(prevState => {
+              return {
+                result: "correct : " + this.state.value,
+                first: Math.ceil(Math.random() * 9),
+                second: Math.ceil(Math.random() * 9),
+                value: ""
+              };
+              this.input.focus();
+            });
+            // // 비동기 예제
+            // this.setState({
+            //     value: this.state.value + 1,
+            // });
+            // this.setState({
+            //     value: this.state.value + 1,
+            // });
+            // this.setState({
+            //     value: this.state.value + 1,
+            // });
+
+            // console.log(this.state.value);
+            // // 기존 value가 기존 value + 3? value +1 이 될 수 있음.
+            // // 일단은 예전 state의 값으로 새로운 state를 만들 때는 리턴값이 있는 함수를 쓴다
+            // this.setState((prevState) => {
+            //     return {
+            //         value: prevState.value +1,
+            //     }
+            // });
+            // console.log(this.state.value);
+          } else {
+            this.setState({
+              result: "Oops...",
+              value: ""
+            });
+          }
+        };
+
+        onChange = e => {
+          this.setState({ value: e.target.value });
+        };
+
+        input;
+
+        // DOM에 직접 접근 -> ref
+        render() {
+          console.log("rendering");
+          // 10초 걸리는 함수 long();
+          return (
+            <React.Fragment>
+              <div>
+                {this.state.first} x {this.state.second}?
+              </div>
+              <form onSubmit={this.onSubmit}>
+                <input
+                  ref={c => {
+                    this.input = c;
+                  }}
+                  type="number"
+                  value={this.state.value}
+                  onChange={this.onChange}
+                />
+                <button>입력</button>
+              </form>
+              <div>{this.state.result}</div>
+            </React.Fragment>
+          );
+        }
+      }
+    </script>
+    <script type="text/babel">
+      ReactDOM.render(<GuGuDan />, document.getElementById("root"));
+    </script>
+  </body>
+</html>
