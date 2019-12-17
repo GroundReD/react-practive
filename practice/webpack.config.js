@@ -14,7 +14,10 @@ module.exports = {
             loader: 'babel-loader',
             options: {
                 presets: ['@babel/preset-env', '@babel/preset-react'],
-                plugins: ['@babel/plugin-proposal-class-properties'],
+                plugins: [
+                    '@babel/plugin-proposal-class-properties',
+                    'react-hot-loader/babel',
+                ],
             }
         }],
     },
@@ -22,5 +25,6 @@ module.exports = {
     output: {
         path: path.join(__dirname, 'dist'),
         filename: 'app.js',
+        publicPath: '/dist'
     }, // 출력
 };
