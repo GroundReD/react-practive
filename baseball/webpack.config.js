@@ -1,9 +1,12 @@
 const path = require('path');
 
 module.exports = {
-    name: 'word-chain-setting',
+    name: 'baseball-setting',
     mode: 'development', //실서비스 production
     devtool: 'eval',
+    resolve: {
+        extensions: ['.jsx', '.js'],
+    },
     entry : {
         app : ['./client.jsx'],
     }, //입력
