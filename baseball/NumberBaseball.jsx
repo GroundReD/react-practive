@@ -1,53 +1,92 @@
-const React = require('react');
-const { Component } = React;
+import React, { Component } from 'react';
+import Try from './Try';
 
-class WordChain extends Component {
+function getNumbers() {
+    const candidate = [1,2,3,4,5,6,7,8,9];
+    const array = [];
+    for (let i = 0 ; i < 4 ; i += 1) {
+        const chosen = candidate.splice(Math.floor(Math.random() * (9 - i)), 1)[0];    
+        array.push(chosen);
+    }
+    return array;
+}
+
+class NumberBaseball extends Component {
     state = {
-        word: 'gred',
-        value: '',
-        result: '',
-    };
+        value:'',
+        result:'',
+        answer: getNumbers(),
+        tries: [], //배열에 값 넣을 때 push 쓰면 안됨
+    }
 
-    input;
+    onChangeInput = (e) => {
+        console.log(this.state.answer);
+        this.setState( {
+            value: e.target.value,
+        })
+    };
 
     onSubmitForm = (e) => {
         e.preventDefault();
-        if(this.state.word[this.state.word.length - 1] === this.state.value[0]) {
-            this.setState({
-                result: 'correct',
-                word: value,
-                value : '',
-            });
-            this.input.focus();
-        } else {
+        if (this.state.value === this.state.answer.join('')) {
             this.setState( {
-                result : 'wrong..',
-                value: '',
+                result: 'Home Run!',
+                tries: [...this.state.tries, {try: this.state.value, result: 'Home Run!'}],
             });
+            alert('New Game');
+                this.setState( {
+                    value: '',
+                    answer: getNumbers(),
+                    tries: [],
+                });   
+        } else {
+            const answerArray = this.state.value.split('').map((v) => parseInt(v));
+            let strike = 0;
+            let ball = 0;
+            if(this.state.tries.length >= 9) {
+                this.setState( {
+                    result: `over 10 tries, fail! The answer is ${answer.join(',')}`,
+                });
+                alert('New Game');
+                this.setState( {
+                    value: '',
+                    answer: getNumbers(),
+                    tries: [],
+                });   
+            } else {
+                for(let i = 0; i <4; i+= 1) {
+                    if (answerArray[i] === this.state.answer[i]) {
+                        strike +=1;
+                    } else if (this.state.answer.includes(answerArray[i])) {
+                        ball += 1;
+                    }
+                }
+                this.setState( {
+                    tries: [...this.state.tries, {try: this.state.value, result: `${strike} strikes, ${ball} ball`}],
+                    value: '',
+                });
+            }
         }
     };
-
-    onChangeInput = (e) => {
-        this.setState({value: e.currentTarget.value});
-    };
-
-    onRefInput = ( c ) => {
-        this.input = c;
-    };
-
-    render(){
+    render() {
         return (
             <>
-                <div>{this.state.word}</div>
-                <form onSubmit = {this.onSubmitForm}>
-                    <input ref={this.onRefInput} value ={this.state.value} onChange={this.onChangeInput} />
-                    <button>submit</button>
-                </form>
-                <div>{this.state.result}</div>
-                <p>react에서 input을 쓸때는 value와 onChange를 같이 쓰거나 defaultValue를 써줘야함. (defaultValue는 확인)</p>
+            <h1>{this.state.result}</h1>
+            <form onSubmit={this.onSubmitForm}>
+                <input maxLength={4} value={this.state.value} onChange={this.onChangeInput} />
+            </form>
+            <div>시도: {this.state.tries.length}</div>
+            <ul>
+                {this.state.tries.map( (v,i) => {
+                    return (
+                        <Try key={`${i+1}차시도 :`} tryInfo={v} />
+                    )
+                })}
+            </ul>
+            {/* react 주석처리 */}
             </>
-        );
-    };
+        )
+    }
 }
 
-module.exports = WordChain;
+export default NumberBaseball;
