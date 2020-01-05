@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import Try from './Try';
 
 function getNumbers() {
@@ -11,7 +11,7 @@ function getNumbers() {
     return array;
 }
 
-const NumberBaseball = () => {
+const NumberBaseball = memo(() => {
     const [result, setResult] = useState('');
     const [value, setValue] = useState('');
     const [answer, setAnswer] = useState(getNumbers());
@@ -69,9 +69,15 @@ const NumberBaseball = () => {
                 )
             })}
         </ul>
-        {/* react 주석처리 */}
+        {/* react 주석처리 
+            기록해야할 것
+                - pureComponent, memo
+                - createRef
+                - class, hooks가 언제 사용되면 좋은지
+                - 자식 component에서 props를 바꿔야할 경우, 어쩔수없을땐 자식 state에서 props 변환
+        */}
         </>
     );
-}
+});
 
 export default NumberBaseball;
