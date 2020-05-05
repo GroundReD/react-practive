@@ -64,10 +64,10 @@ class RSP extends Component {
   }
   componentWillUnmount() {
     // 컴포넌트 제거되기 직전
-    clearInterval(this.interval);
+    clearInterval(this.interval, 100);
   }
 
-  onClickBtn = (choice) => {
+  onClickBtn = (choice) => (e) => {
     clearInterval(this.interval);
     const { imgCoord } = this.state;
     const myScore = scores[choice];
@@ -86,10 +86,7 @@ class RSP extends Component {
       });
     } else {
       this.setState((prevState) => {
-        return {
-          result: "you lose..",
-          score: prevState.score - 1,
-        };
+        return { score: prevState.score - 1 };
       });
     }
 
@@ -103,36 +100,17 @@ class RSP extends Component {
     return (
       <>
         <div
-          id="computer"
+          id='computer'
           style={{
             background: `url(https://en.pimg.jp/023/182/267/1/23182267.jpg) ${imgCoord} 0`,
-          }}
-        ></div>
-        <button
-          id="scissor"
-          className="btn"
-          onClick={() => {
-            this.onClickBtn("scissor");
-          }}
-        >
+          }}></div>
+        <button id='scissor' className='btn' onClick={this.onClickBtn("scissor")}>
           가위
         </button>
-        <button
-          id="rock"
-          className="btn"
-          onClick={() => {
-            this.onClickBtn("rock");
-          }}
-        >
+        <button id='rock' className='btn' onClick={this.onClickBtn("rock")}>
           바위
         </button>
-        <button
-          id="paper"
-          className="btn"
-          onClick={() => {
-            this.onClickBtn("paper");
-          }}
-        >
+        <button id='paper' className='btn' onClick={this.onClickBtn("paper")}>
           보
         </button>
         <div>{result}</div>
