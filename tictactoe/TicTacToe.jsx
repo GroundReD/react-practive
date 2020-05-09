@@ -1,4 +1,4 @@
-import React, { useState, useReducer, useCallback } from "react";
+import React, { useState, useEffect, useReducer, useCallback } from "react";
 import Table from "./Table";
 
 const initialState = {
@@ -9,11 +9,13 @@ const initialState = {
         ["", "", ""],
         ["", "", ""],
     ],
+    recentCell: [-1, -1],
 };
 
 export const SET_WINNER = "SET_WINNER";
 export const CLICK_CELL = "CLICK_CELL";
 export const CHANGE_TURN = "CHANGE_TURN";
+export const RESET_GAME = "RESET_GAME";
 
 const reducer = (state, action) => {
     switch (action.type) {
@@ -25,7 +27,6 @@ const reducer = (state, action) => {
                 ...state,
                 winner: action.winner,
             };
-            break;
         case CLICK_CELL:
             // 불변성을 위해 객체들을 모두 얕은 복사
             // immer라는 라이브러리로 가독성 해결
@@ -35,38 +36,92 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 tableData,
+                recentCell: [action.row, action.cell],
             };
-            break;
         case CHANGE_TURN:
             return {
                 ...state,
                 turn: state.turn === "O" ? "X" : "O",
             };
-            break;
+        case RESET_GAME:
+            return {
+                ...state,
+                turn: "O",
+                tableData: [
+                    ["", "", ""],
+                    ["", "", ""],
+                    ["", "", ""],
+                ],
+                recentCell: [-1, -1],
+            };
         default:
-            break;
+            return state;
     }
 };
 const TicTacToe = () => {
     const [state, dispatch] = useReducer(reducer, initialState);
-
-    // const [winner, setWinner] = useState("");
-    // const [turn, setTurn] = useState("");
-    // const [tableData, setTableData] = useState([
-    //     ["", "", ""],
-    //     ["", "", ""],
-    //     ["", "", ""],
-    // ]);
-
+    const { tableData, turn, winner, recentCell } = state;
     const onClickTable = useCallback(() => {
         // action을 dispatch 할 때마다 reducer가 실행됨.
-        dispatch({ type: SET_WINNER, winner: "O" });
+        dispatch({ type: SET_WINNER, winner: winner });
     }, []);
+
+    // 승리조건 체크
+    useEffect(() => {
+        const [row, cell] = recentCell;
+        if (row < 0 || cell < 0) {
+            return;
+        }
+
+        let win = false;
+        if (
+            tableData[row][0] === turn &&
+            tableData[row][1] === turn &&
+            tableData[row][2] === turn
+        ) {
+            win = true;
+        }
+
+        if (
+            tableData[0][cell] === turn &&
+            tableData[1][cell] === turn &&
+            tableData[2][cell] === turn
+        ) {
+            win = true;
+        }
+
+        if (tableData[0][0] === turn && tableData[1][1] === turn && tableData[2][2] === turn) {
+            win = true;
+        }
+
+        if (tableData[2][0] === turn && tableData[1][1] === turn && tableData[0][2] === turn) {
+            win = true;
+        }
+
+        if (win) {
+            dispatch({ type: SET_WINNER, winner: turn });
+            dispatch({ type: RESET_GAME });
+        } else {
+            let checkDraw = true;
+            tableData.forEach((row) => {
+                row.forEach((cell) => {
+                    if (!cell) {
+                        checkDraw = false;
+                    }
+                });
+            });
+
+            if (checkDraw) {
+            } else {
+                dispatch({ type: CHANGE_TURN });
+            }
+        }
+    }, [recentCell]);
 
     return (
         <>
-            <Table onClick={onClickTable} tableData={state.tableData} dispatch={dispatch}></Table>
-            {state.winner && <div>{state.winner} 님의 승리</div>}
+            <Table onClick={onClickTable} tableData={tableData} dispatch={dispatch}></Table>
+            {winner && <div>{winner} 님의 승리</div>}
         </>
     );
 };
