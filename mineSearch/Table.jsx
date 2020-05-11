@@ -4,7 +4,6 @@ import Tr from "./Tr";
 
 const Table = () => {
     const { tableData } = useContext(TableContext);
-    console.log("table", tableData);
     const onClick = () => {};
     return (
         <>

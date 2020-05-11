@@ -4,8 +4,6 @@ import Td from "./Td";
 
 const Tr = memo(({ rowIndex }) => {
     const { tableData } = useContext(TableContext);
-
-    console.log(tableData[0]);
     return (
         <>
             <tr>
